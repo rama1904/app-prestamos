@@ -1,0 +1,17 @@
+.container1 {
+  max-width: 960px;
+}
+
+.imagen.prestamos {
+  font-size: 1.125rem;
+  text-anchor: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+@media (min-width: 768px) {
+  .imagen-prestamos {
+    font-size: 3.5rem;
+  }
+}
