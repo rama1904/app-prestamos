@@ -33,47 +33,41 @@
 </head>
 <body>
 
-  <div class="form-container">
-    <h2>Simulador de Préstamos</h2>
-    <form id="loanForm">
-      <!-- Nombre y Apellido -->
-      <div class="form-group">
-        <label for="nombre">Nombre y Apellido</label>
-        <input type="text" id="nombre" name="nombre" placeholder="Ingrese su nombre y apellido" required>
-      </div>
+    <body class="turn">
+        <main>
+            <div class="container mt-5">
+                <h2 class="text-center">Simulador de Préstamos</h2>
+                <form id="loanForm" class="needs-validation mt-4">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre y Apellido</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Ingrese su nombre y apellido" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Ingrese su correo electrónico" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="monto" class="form-label">¿Cuánto necesitas?</label>
+                        <input type="number" id="monto" name="monto" class="form-control" placeholder="Ej: 100000" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cuotas" class="form-label">¿En cuántas cuotas?</label>
+                        <input type="number" id="cuotas" name="cuotas" class="form-control" placeholder="Ej: 12" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Simular</button>
+                </form>
+    
+                <!-- Contenedor para la lista de resultados -->
+                <h3 class="mt-5">Solicitudes realizadas</h3>
+                <ul id="loanList" class="list-group"></ul>
+            </div>
+        </main>
+    
       
-      <!-- Email -->
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="Ingrese su correo electrónico" required>
-      </div>
+      <button type="submit" class="btn btn-primary">Simular</button>
       
-      <!-- ¿Cuánto necesitas? -->
-      <div class="form-group">
-        <label for="monto">¿Cuánto necesitas?</label>
-        <input type="number" id="monto" name="monto" placeholder="Ej: 100000" required>
-      </div>
-      
-      <!-- ¿En cuántas cuotas? -->
-      <div class="form-group">
-        <label for="cuotas">¿En cuántas cuotas?</label>
-        <input type="number" id="cuotas" name="cuotas" placeholder="Ej: 12" required>
-      </div>
-      
-      <!-- Botón Simular -->
-      <div class="form-group">
-        <button type="button" id="simularButton">Simular</button>
-      </div>
     </form>
-
-    <!-- Resultados -->
-    <div class="result" id="result" style="display: none;">
-      <h3>Resultados de la Simulación</h3>
-      <p><strong>Total a devolver:</strong> <span id="totalDevolver"></span></p>
-      <p><strong>Intereses totales:</strong> <span id="intereses"></span></p>
-      <p><strong>Cuota mensual:</strong> <span id="cuotaMensual"></span></p>
-    </div>
-  </div>
+     
 
   <script src="script.js"></script>
 </body>

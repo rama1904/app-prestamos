@@ -1,58 +1,214 @@
+// Variables globales
+const form = document.getElementById("loanForm");
+const loanList = document.getElementById("loanList");
+const tasaInteresAnual = 0.2; // 20% anual
 
-document.getElementById('simularButton').addEventListener('click', function () {
-  // Obtener valores del formulario
-  const nombre = document.getElementById('nombre').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const monto = parseFloat(document.getElementById('monto').value);
-  const cuotas = parseInt(document.getElementById('cuotas').value);
+// Evento para manejar el envío del formulario
+form.addEventListener("submit", (e) => {
+    e.preventDefault(); // Evitar recargar la página
 
-  // Validar datos del formulario
-  if (!nombre || !email || isNaN(monto) || isNaN(cuotas) || monto <= 0 || cuotas <= 0) {
-    alert('Por favor, complete todos los campos correctamente.');
-    return;
-  }
+    // Obtener valores del formulario
+    const nombre = document.getElementById("nombre").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const monto = parseFloat(document.getElementById("monto").value);
+    const cuotas = parseInt(document.getElementById("cuotas").value);
 
-  // Lógica de cálculo
-  const tasaInteresAnual = 0.2; // 20% anual
-  const tasaInteresMensual = tasaInteresAnual / 12;
-  const totalIntereses = monto * tasaInteresMensual * cuotas;
-  const totalDevolver = monto + totalIntereses;
-  const cuotaMensual = totalDevolver / cuotas;
+    // Validar los datos ingresados
+    if (!nombre || !email || isNaN(monto) || isNaN(cuotas) || monto <= 0 || cuotas <= 0) {
+        alert("Por favor, complete todos los campos correctamente.");
+        return;
+    }
 
-  // Mostrar resultados
-  document.getElementById('totalDevolver').textContent = `$${totalDevolver.toFixed(2)}`;
-  document.getElementById('intereses').textContent = `$${totalIntereses.toFixed(2)}`;
-  document.getElementById('cuotaMensual').textContent = `$${cuotaMensual.toFixed(2)}`;
-  document.getElementById('result').style.display = 'block';
+    // Calcular el préstamo
+    const tasaInteresMensual = tasaInteresAnual / 12;
+    const totalIntereses = monto * tasaInteresMensual * cuotas;
+    const totalDevolver = monto + totalIntereses;
+    const cuotaMensual = totalDevolver / cuotas;
+
+    // Crear un objeto con los datos de la simulación
+    const nuevaSimulacion = {
+        nombre,
+        email,
+        monto,
+        cuotas,
+        totalDevolver: totalDevolver.toFixed(2),
+        totalIntereses: totalIntereses.toFixed(2),
+        cuotaMensual: cuotaMensual.toFixed(2),
+    };
+
+    // Guardar en localStorage
+    guardarEnStorage(nuevaSimulacion);
+
+    // Mostrar los resultados
+    mostrarSolicitudes();
+
+    // Limpiar el formulario
+    form.reset();
 });
-const simulacion = {
-  nombre,
-  email,
-  monto,
-  cuotas,
-  totalDevolver: totalDevolver.toFixed(2),
-  totalIntereses: totalIntereses.toFixed(2),
-  cuotaMensual: cuotaMensual.toFixed(2)
-};
 
-localStorage.setItem('simulacion', JSON.stringify(simulacion));
-
-// Recuperar datos al cargar la página
-window.addEventListener('load', () => {
-const simulacion = JSON.parse(localStorage.getItem('simulacion'));
-if (simulacion) {
-  document.getElementById('nombre').value = simulacion.nombre;
-  document.getElementById('email').value = simulacion.email;
-  document.getElementById('monto').value = simulacion.monto;
-  document.getElementById('cuotas').value = simulacion.cuotas;
-
-  document.getElementById('totalDevolver').textContent = `$${simulacion.totalDevolver}`;
-  document.getElementById('intereses').textContent = `$${simulacion.totalIntereses}`;
-  document.getElementById('cuotaMensual').textContent = `$${simulacion.cuotaMensual}`;
-  document.getElementById('result').style.display = 'block';
+// Función para guardar una simulación en localStorage
+function guardarEnStorage(simulacion) {
+    const simulaciones = JSON.parse(localStorage.getItem("simulaciones")) || [];
+    simulaciones.push(simulacion); // Agregar la nueva simulación
+    localStorage.setItem("simulaciones", JSON.stringify(simulaciones));
 }
-console.log('Datos guardados en localStorage:', simulacion);
-});
+
+// Función para mostrar todas las solicitudes desde localStorage
+function mostrarSolicitudes() {
+    const simulaciones = JSON.parse(localStorage.getItem("simulaciones")) || [];
+    loanList.innerHTML = ""; // Limpiar la lista anterior
+
+    simulaciones.forEach((simulacion, index) => {
+        const li = document.createElement("li");
+        li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+        li.textContent = `${simulacion.nombre} solicitó $${simulacion.monto} en ${simulacion.cuotas} cuotas. Total a devolver: $${simulacion.totalDevolver}`;
+
+        // Crear botón de eliminación
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Eliminar";
+        deleteBtn.className = "btn btn-danger btn-sm";
+        deleteBtn.addEventListener("click", () => eliminarSolicitud(index));
+
+        li.appendChild(deleteBtn);
+        loanList.appendChild(li);
+    });
+}
+
+// Función para eliminar una simulación por índice
+function eliminarSolicitud(index) {
+    const simulaciones = JSON.parse(localStorage.getItem("simulaciones")) || [];
+    simulaciones.splice(index, 1); // Eliminar la simulación
+    localStorage.setItem("simulaciones", JSON.stringify(simulaciones));
+    mostrarSolicitudes(); // Actualizar la lista
+}
+
+// Mostrar las simulaciones al cargar la página
+document.addEventListener("DOMContentLoaded", mostrarSolicitudes);
+
+// Función para cargar productos desde un archivo JSON
+function cargarProductosJSON() {
+  fetch("..")
+      .then(response => {
+          if (!response.ok) {
+              throw new Error("Error al cargar el archivo JSON");
+          }
+          return response.json();
+      })
+      .then(data => {
+          productos = data; // Almacena los productos en la variable global
+          cargarProductos();
+      })
+      .catch(error => {
+          console.error("Error al cargar productos:", error);
+      });
+}
+
+
+
+//  // Variables globales
+// const form = document.getElementById("form");
+// const loanList = document.getElementById("loanlist");
+// const resultDiv = document.getElementById("result");
+// const tasaInteresAnual = 0.2; // 20% anual
+
+// // Evento para procesar el formulario
+// form.addEventListener("submit", (e) => {
+//   e.preventDefault(); // Evitar recargar la página
+
+//   // Obtener valores del formulario
+//   const nombre = document.getElementById("nombre").value.trim();
+//   const email = document.getElementById("email").value.trim();
+//   const monto = parseFloat(document.getElementById("monto").value);
+//   const cuotas = parseInt(document.getElementById("cuotas").value);
+
+//   // Validar datos
+//   if (!nombre || !email || isNaN(monto) || isNaN(cuotas) || monto <= 0 || cuotas <= 0) {
+//     alert("Por favor, complete todos los campos correctamente.");
+//     return;
+//   }
+
+//    // Calcular el préstamo
+//    const tasaInteresMensual = tasaInteresAnual / 12;
+//    const totalIntereses = monto * tasaInteresMensual * cuotas;
+//    const totalDevolver = monto + totalIntereses;
+//    const cuotaMensual = totalDevolver / cuotas;
+ 
+//    // Crear un objeto con los datos de la simulación
+//    const nuevaSimulacion = {
+//      nombre,
+//      email,
+//      monto,
+//      cuotas,
+//      totalDevolver: totalDevolver.toFixed(2),
+//      totalIntereses: totalIntereses.toFixed(2),
+//      cuotaMensual: cuotaMensual.toFixed(2),
+//    };
+ 
+//    // Guardar en localStorage
+//    guardarEnStorage(nuevaSimulacion);
+ 
+//    // Mostrar los resultados
+//    mostrarSolicitudes();
+ 
+//    // Limpiar el formulario
+//    form.reset();
+//  });
+ 
+//  // Función para guardar una simulación en localStorage
+//  function guardarEnStorage(simulacion) {
+//    const simulaciones = JSON.parse(localStorage.getItem("simulaciones")) || [];
+//    simulaciones.push(simulacion); // Agregar la nueva simulación
+//    localStorage.setItem("simulaciones", JSON.stringify(simulaciones));
+//  }
+ 
+//  // Función para mostrar todas las solicitudes desde localStorage
+//  function mostrarSolicitudes() {
+//    const simulaciones = JSON.parse(localStorage.getItem("simulaciones")) || [];
+//    const loanList = document.getElementById("loanList");
+ 
+//    // Crear la lista de solicitudes si no existe
+//    if (!loanList) {
+//      const nuevaLista = document.createElement("ul");
+//      nuevaLista.id = "loanList";
+//      form.insertAdjacentElement("afterend", nuevaLista); // Colocar debajo del formulario
+//    }
+ 
+//    // Obtener la lista y limpiar la anterior
+//    const list = document.getElementById("loanList");
+//    list.innerHTML = "";
+ 
+//    // Agregar cada solicitud a la lista
+//    simulaciones.forEach((simulacion, index) => {
+//      const li = document.createElement("li");
+//      li.classList.add("list-group-item");
+//      li.textContent = `${simulacion.nombre} solicitó $${simulacion.monto} en ${simulacion.cuotas} cuotas. Total a devolver: $${simulacion.totalDevolver}`;
+ 
+//      // Crear botón de eliminación
+//      const deleteBtn = document.createElement("button");
+//      deleteBtn.textContent = "Eliminar";
+//      deleteBtn.className = "btn btn-danger btn-sm ms-3";
+//      deleteBtn.addEventListener("click", () => eliminarSolicitud(index));
+ 
+//      li.appendChild(deleteBtn);
+//      list.appendChild(li);
+//    });
+//  }
+ 
+//  // Función para eliminar una simulación por índice
+//  function eliminarSolicitud(index) {
+//    const simulaciones = JSON.parse(localStorage.getItem("simulaciones")) || [];
+//    simulaciones.splice(index, 1); // Eliminar la simulación
+//    localStorage.setItem("simulaciones", JSON.stringify(simulaciones));
+//    mostrarSolicitudes(); // Actualizar la lista
+//  }
+ 
+//  // Mostrar las simulaciones al cargar la página
+//  document.addEventListener("DOMContentLoaded", mostrarSolicitudes);
+
+
+
+
+
 
 
 
